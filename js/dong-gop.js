@@ -42,7 +42,6 @@ function themTu() {
 
   if (!tuGocHienTai || newValues.length === 0) return;
 
-  // Lấy giá trị hiện tại rồi nối thêm
   db.ref(`Từ 2 âm tiết/${tuGocHienTai}`)
     .once("value")
     .then((snap) => {
@@ -51,22 +50,20 @@ function themTu() {
         ? currentVal.split(",").map((v) => v.trim()).filter((v) => v)
         : [];
 
-      // Lọc ra các âm tiết mới không trùng với hiện có
+      // Lọc ra các âm tiết chưa có
       let toAdd = newValues.filter((v) => !currentList.includes(v));
-
       if (toAdd.length === 0) {
         document.getElementById("thong-bao").textContent = "Từ này đã có đầy đủ âm tiết.";
         return;
       }
 
-      // Nối chuỗi mới
       let updatedList = currentList.concat(toAdd);
-      let updatedStr = updatedList.join(",");
+      let updatedStr = updatedList.join(", "); // Cách nhau bằng ", "
 
-      // Ghi lại vào csdl
+      // Cập nhật value cho từ gốc
       db.ref(`Từ 2 âm tiết/${tuGocHienTai}`).set(updatedStr);
 
-      // Lưu vào TuMoi, TuKho nếu cần
+      // Xử lý từng âm tiết mới
       toAdd.forEach((val) => {
         const full = `${tuGocHienTai} ${val}`;
         db.ref(`Từ mới/${full}`).set(true);
@@ -75,19 +72,25 @@ function themTu() {
           db.ref(`Từ khó/${full}`).set(true);
         }
 
-        db.ref(`Từ 2 âm tiết/${val}`)
+        // Tạo key mới nếu chưa tồn tại, viết hoa chữ cái đầu
+        const valKey = val.charAt(0).toUpperCase() + val.slice(1);
+
+        db.ref(`Từ 2 âm tiết/${valKey}`)
           .once("value")
           .then((snap2) => {
             if (!snap2.exists()) {
-              db.ref(`Từ 2 âm tiết/${val}`).set(null);
+              db.ref(`Từ 2 âm tiết/${valKey}`).set(""); // tạo key mới
             }
           });
       });
 
       daThem++;
-      document.getElementById("thong-bao").textContent = `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/222)`;
+      document.getElementById("thong-bao").textContent =
+        `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/222)`;
     });
 }
+
+
 
 
 document.getElementById("btn-them").onclick = themTu;
