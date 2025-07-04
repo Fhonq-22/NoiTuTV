@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #222;
+}
+
+input[type="text"] {
+  padding: 0.5rem;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  border: none;
+  background-color: #2d89ef;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1b5fad;
+}
+
+label {
+  font-weight: 500;
+}
+
+.thong-bao {
+  color: green;
+  margin-top: 1rem;
+  font-weight: 600;
+}

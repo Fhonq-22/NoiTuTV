@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đóng góp từ nối | NoiTuTV</title>
+  <link rel="stylesheet" href="css/dong-gop.css" />
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>💡 Đóng góp từ nối</h1>
+  <div id="app">
+    <p><strong>Từ gốc:</strong> <span id="tu-goc">Đang tải...</span></p>
+    <label>Nhập âm tiết thứ 2 (cách nhau bằng dấu phẩy):</label><br />
+    <input type="text" id="input-value" />
+    <br /><br />
+    <label>
+      <input type="checkbox" id="checkbox-kho" /> Đây là từ khó
+    </label>
+    <br /><br />
+    <button id="btn-them">✅ Thêm</button>
+    <button id="btn-tiep">➡️ Từ tiếp theo</button>
+    <p id="thong-bao" class="thong-bao"></p>
+  </div>
+
+  <script type="module" src="js/dong-gop.js"></script>
+</body>
+</html>
