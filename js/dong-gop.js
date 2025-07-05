@@ -2,7 +2,7 @@ import { db } from "./firebase-config.js";
 
 let tuGocHienTai = "";
 let daThem = 0;
-const GIOI_HAN = 222;
+const GIOI_HAN = 22;
 
 function layTuTiep() {
   if (daThem >= GIOI_HAN) {
@@ -50,7 +50,6 @@ function themTu() {
         ? currentVal.split(",").map((v) => v.trim()).filter((v) => v)
         : [];
 
-      // Lọc ra các âm tiết chưa có
       let toAdd = newValues.filter((v) => !currentList.includes(v));
       if (toAdd.length === 0) {
         document.getElementById("thong-bao").textContent = "Từ này đã có đầy đủ âm tiết.";
@@ -58,39 +57,53 @@ function themTu() {
       }
 
       let updatedList = currentList.concat(toAdd);
-      let updatedStr = updatedList.join(", "); // Cách nhau bằng ", "
-
-      // Cập nhật value cho từ gốc
+      let updatedStr = updatedList.join(", ");
       db.ref(`Từ 2 âm tiết/${tuGocHienTai}`).set(updatedStr);
 
-      // Xử lý từng âm tiết mới
-      toAdd.forEach((val) => {
-        const full = `${tuGocHienTai} ${val}`;
-        db.ref(`Từ mới/${full}`).set(true);
+      daThem += toAdd.length;
 
-        if (isKho) {
-          db.ref(`Từ khó/${full}`).set(true);
-        }
+      // Lấy mảng từ mới hiện tại
+      db.ref("Từ mới")
+        .once("value")
+        .then((tuMoiSnap) => {
+          let danhSach = tuMoiSnap.val() || [];
+          if (!Array.isArray(danhSach)) danhSach = [];
 
-        // Tạo key mới nếu chưa tồn tại, viết hoa chữ cái đầu
-        const valKey = val.charAt(0).toUpperCase() + val.slice(1);
+          // Tạo danh sách từ mới
+          const tuMoiMoi = toAdd.map((v) => `${tuGocHienTai} ${v}`);
 
-        db.ref(`Từ 2 âm tiết/${valKey}`)
-          .once("value")
-          .then((snap2) => {
-            if (!snap2.exists()) {
-              db.ref(`Từ 2 âm tiết/${valKey}`).set(""); // tạo key mới
+          // Cập nhật danh sách mới (FIFO)
+          let fullList = danhSach.concat(tuMoiMoi);
+          if (fullList.length > GIOI_HAN) {
+            fullList = fullList.slice(fullList.length - GIOI_HAN);
+          }
+
+          // Ghi lại danh sách từ mới
+          db.ref("Từ mới").set(fullList);
+
+          // Ghi từ khó + tạo key mới nếu cần
+          toAdd.forEach((val) => {
+            const full = `${tuGocHienTai} ${val}`;
+
+            if (isKho) {
+              db.ref(`Từ khó/${full}`).set(true);
             }
-          });
-      });
 
-      daThem++;
-      document.getElementById("thong-bao").textContent =
-        `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/222)`;
+            const valKey = val.charAt(0).toUpperCase() + val.slice(1);
+            db.ref(`Từ 2 âm tiết/${valKey}`)
+              .once("value")
+              .then((snap2) => {
+                if (!snap2.exists()) {
+                  db.ref(`Từ 2 âm tiết/${valKey}`).set("");
+                }
+              });
+          });
+
+          document.getElementById("thong-bao").textContent =
+            `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/22)`;
+        });
     });
 }
-
-
 
 
 document.getElementById("btn-them").onclick = themTu;
