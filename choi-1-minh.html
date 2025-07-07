@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chơi 1 Mình - NoiTuTV</title>
+  <link rel="stylesheet" href="css/choi-1-minh.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script type="module" src="js/choi-1-minh.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>⌛ Chế độ 1 mình</h1>
+    <div class="game-box">
+      <div class="info">
+        <div>⏱️ Thời gian: <span id="thoi-gian">15</span>s</div>
+        <div>⭐ Điểm: <span id="diem">0</span></div>
+      </div>
+
+      <div class="tugoc">Âm tiết đầu: <strong id="tu-goc">?</strong></div>
+
+      <input type="text" id="input-value" placeholder="Nhập âm tiết thứ 2...">
+      <button id="btn-tra-loi">Gửi</button>
+
+      <div id="thong-bao"></div>
+    </div>
+  </div>
+</body>
+</html>

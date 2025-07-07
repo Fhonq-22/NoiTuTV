@@ -1,0 +1,94 @@
+/* choi-1-minh.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+}
+
+.container {
+  background: #fff;
+  padding: 36px 48px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  width: 420px;
+  max-width: 92vw;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 28px;
+  color: #4a148c;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #555;
+}
+
+.tugoc {
+  font-size: 18px;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 17px;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  outline-offset: 2px;
+}
+
+input[type="text"]:focus {
+  border-color: #7e57c2;
+  outline: none;
+  box-shadow: 0 0 8px rgba(126, 87, 194, 0.6);
+}
+
+button {
+  margin-top: 20px;
+  width: 100%;
+  background: #7e57c2;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 14px 0;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 15px rgba(126, 87, 194, 0.4);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  background: #673ab7;
+  box-shadow: 0 12px 20px rgba(103, 58, 183, 0.6);
+}
+
+#thong-bao {
+  margin-top: 16px;
+  min-height: 24px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #d32f2f;
+}
+
+#thong-bao.success {
+  color: #388e3c;
+}
