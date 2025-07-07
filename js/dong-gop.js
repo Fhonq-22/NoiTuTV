@@ -1,112 +1,99 @@
 import { db } from "./firebase-config.js";
 
-let tuGocHienTai = "";
-let daThem = 0;
-const GIOI_HAN = 22;
+const userName = "user02";
 
-function layTuTiep() {
-  if (daThem >= GIOI_HAN) {
-    document.getElementById("thong-bao").textContent =
-      "Đã đạt giới hạn 222 từ đóng góp.";
+const inputTu = document.getElementById("input-tu");
+const btnDongGop = document.getElementById("btn-dong-gop");
+const thongBao = document.getElementById("thong-bao");
+
+// Viết hoa âm tiết đầu, giữ nguyên âm tiết sau
+function chuanHoaTuNhap(value) {
+  const parts = value.trim().split(" ").filter(Boolean);
+  if (parts.length !== 2) return "";
+  const tuGoc = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
+  const amTiet2 = parts[1].toLowerCase();
+  return `${tuGoc} ${amTiet2}`;
+}
+
+// Viết hoa âm tiết đầu ngay trong khi nhập
+inputTu.addEventListener("input", () => {
+  const value = inputTu.value;
+  const chuanHoa = chuanHoaTuNhap(value);
+  if (chuanHoa) {
+    inputTu.value = chuanHoa;
+  }
+});
+
+function kiemTraDaDongGop(user, tuMoi) {
+  return db.ref(`Đóng góp/${user}/${tuMoi}`).once("value").then(snap => snap.exists());
+}
+
+function layGiaTriTuDien(tuGoc) {
+  return db.ref("Từ 2 âm tiết/" + tuGoc).once("value").then(snap => snap.val());
+}
+
+function themDongGop(user, tuMoi) {
+  db.ref(`Đóng góp/${user}/${tuMoi}`).set(false)
+    .then(() => {
+      thongBao.textContent = `✅ Cảm ơn bạn đã đóng góp từ "${tuMoi}". Từ đang chờ duyệt.`;
+      thongBao.classList.remove("error");
+      inputTu.value = "";
+    })
+    .catch(() => {
+      thongBao.textContent = "❌ Lỗi khi gửi đóng góp, vui lòng thử lại.";
+      thongBao.classList.add("error");
+    });
+}
+
+btnDongGop.onclick = async () => {
+  const tuRaw = inputTu.value.trim();
+  if (!tuRaw) {
+    thongBao.textContent = "Vui lòng nhập từ cần đóng góp.";
+    thongBao.classList.add("error");
     return;
   }
 
-  db.ref("Từ 2 âm tiết")
-    .once("value")
-    .then((snapshot) => {
-      const data = snapshot.val();
-      for (const key in data) {
-        if (!data[key]) {
-          tuGocHienTai = key;
-          document.getElementById("tu-goc").textContent = key;
-          document.getElementById("input-value").value = "";
-          document.getElementById("checkbox-kho").checked = false;
-          document.getElementById("thong-bao").textContent = "";
-          return;
-        }
-      }
-      document.getElementById("tu-goc").textContent =
-        "✔️ Đã xử lý hết từ cần đóng góp.";
-    });
-}
+  const parts = tuRaw.split(" ").filter(Boolean);
+  if (parts.length !== 2) {
+    thongBao.textContent = "Vui lòng nhập đúng 2 âm tiết, cách nhau bởi dấu cách.";
+    thongBao.classList.add("error");
+    return;
+  }
 
-function themTu() {
-  const valueRaw = document.getElementById("input-value").value.trim();
-  if (!valueRaw) return;
+  const tuGoc = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
+  const amTiet2 = parts[1].toLowerCase();
+  const tuMoi = `${tuGoc} ${amTiet2}`;
 
-  const newValues = valueRaw
-    .split(",")
-    .map((v) => v.trim())
-    .filter((v) => v);
-  const isKho = document.getElementById("checkbox-kho").checked;
+  try {
+    const giaTriTuDien = await layGiaTriTuDien(tuGoc);
 
-  if (!tuGocHienTai || newValues.length === 0) return;
-
-  db.ref(`Từ 2 âm tiết/${tuGocHienTai}`)
-    .once("value")
-    .then((snap) => {
-      let currentVal = snap.val() || "";
-      let currentList = currentVal
-        ? currentVal.split(",").map((v) => v.trim()).filter((v) => v)
-        : [];
-
-      let toAdd = newValues.filter((v) => !currentList.includes(v));
-      if (toAdd.length === 0) {
-        document.getElementById("thong-bao").textContent = "Từ này đã có đầy đủ âm tiết.";
+    // ✅ Ghi chú logic cho sau dễ đọc:
+    if (!giaTriTuDien) {
+      // Key chưa có trong từ điển → vẫn cho đóng góp
+    } else if (giaTriTuDien === "" || giaTriTuDien === ".") {
+      // Key đã có nhưng chưa có âm tiết thứ 2 → vẫn cho đóng góp
+    } else {
+      // Key đã có danh sách → kiểm tra tránh trùng
+      const list = giaTriTuDien.split(",").map(v => v.trim().toLowerCase());
+      if (list.includes(amTiet2)) {
+        thongBao.textContent = `Từ "${tuMoi}" đã có trong từ điển rồi.`;
+        thongBao.classList.add("error");
         return;
       }
+    }
 
-      let updatedList = currentList.concat(toAdd);
-      let updatedStr = updatedList.join(", ");
-      db.ref(`Từ 2 âm tiết/${tuGocHienTai}`).set(updatedStr);
+    const daDongGop = await kiemTraDaDongGop(userName, tuMoi);
+    if (daDongGop) {
+      thongBao.textContent = `Bạn đã đóng góp từ "${tuMoi}" trước đó.`;
+      thongBao.classList.add("error");
+      return;
+    }
 
-      daThem += toAdd.length;
+    // Ghi đóng góp
+    themDongGop(userName, tuMoi);
 
-      // Lấy mảng từ mới hiện tại
-      db.ref("Từ mới")
-        .once("value")
-        .then((tuMoiSnap) => {
-          let danhSach = tuMoiSnap.val() || [];
-          if (!Array.isArray(danhSach)) danhSach = [];
-
-          // Tạo danh sách từ mới
-          const tuMoiMoi = toAdd.map((v) => `${tuGocHienTai} ${v}`);
-
-          // Cập nhật danh sách mới (FIFO)
-          let fullList = danhSach.concat(tuMoiMoi);
-          if (fullList.length > GIOI_HAN) {
-            fullList = fullList.slice(fullList.length - GIOI_HAN);
-          }
-
-          // Ghi lại danh sách từ mới
-          db.ref("Từ mới").set(fullList);
-
-          // Ghi từ khó + tạo key mới nếu cần
-          toAdd.forEach((val) => {
-            const full = `${tuGocHienTai} ${val}`;
-
-            if (isKho) {
-              db.ref(`Từ khó/${full}`).set(true);
-            }
-
-            const valKey = val.charAt(0).toUpperCase() + val.slice(1);
-            db.ref(`Từ 2 âm tiết/${valKey}`)
-              .once("value")
-              .then((snap2) => {
-                if (!snap2.exists()) {
-                  db.ref(`Từ 2 âm tiết/${valKey}`).set("");
-                }
-              });
-          });
-
-          document.getElementById("thong-bao").textContent =
-            `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/22)`;
-        });
-    });
-}
-
-
-document.getElementById("btn-them").onclick = themTu;
-document.getElementById("btn-tiep").onclick = layTuTiep;
-
-document.addEventListener("DOMContentLoaded", layTuTiep);
+  } catch (err) {
+    thongBao.textContent = "Lỗi hệ thống, vui lòng thử lại.";
+    thongBao.classList.add("error");
+  }
+};

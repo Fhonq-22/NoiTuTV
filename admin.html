@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quản lý từ - Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script type="module" src="js/admin.js"></script>
+</head>
+<body>
+  <h2>🔐 Quản lý từ 2 âm tiết (Admin)</h2>
+  <div>
+    <p>Từ gốc: <strong id="tu-goc">...</strong></p>
+    <input id="input-value" placeholder="Nhập âm tiết thứ 2, cách nhau bằng dấu phẩy (,)" />
+    <div>
+      <label><input type="checkbox" id="checkbox-kho" /> Đánh dấu là từ khó</label>
+    </div>
+    <div class="nut-hanh-dong">
+      <button id="btn-them">➕ Thêm</button>
+      <button id="btn-khong-noi-duoc">⛔ Không thể nối tiếp</button>
+      <button id="btn-tiep">➡️ Từ tiếp theo</button>
+    </div>
+    <p id="thong-bao"></p>
+  </div>
+</body>
+</html>
