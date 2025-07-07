@@ -1,45 +1,105 @@
+/* admin.css */
+
 body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
-  background: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #7b4397, #dc2430);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: #333;
 }
 
-h2 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
+.container {
+  background: #fff;
+  padding: 36px 48px;
+  border-radius: 20px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+  width: 420px;
+  max-width: 95vw;
+  box-sizing: border-box;
+  text-align: center;
 }
 
-input {
+h2 {
+  font-size: 26px;
+  font-weight: bold;
+  color: #4a148c;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+#tu-goc {
+  font-size: 20px;
+  color: #4a148c;
+  font-weight: bold;
+  margin-bottom: 18px;
+  display: block;
+}
+
+input[type="text"],
+#input-value {
   width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 10px;
+  padding: 14px 16px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 2px solid #ccc;
+  transition: 0.3s;
   box-sizing: border-box;
+  margin-bottom: 18px;
+}
+
+input:focus {
+  border-color: #dc2430;
+  outline: none;
+  box-shadow: 0 0 6px rgba(220, 36, 48, 0.4);
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 16px;
 }
 
 .nut-hanh-dong {
-  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
 }
 
 button {
-  margin-right: 10px;
-  padding: 8px 12px;
-  font-size: 1rem;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 700;
   border: none;
-  background-color: #3498db;
+  border-radius: 14px;
+  background: #ff5e62;
   color: white;
-  border-radius: 4px;
   cursor: pointer;
+  box-shadow: 0 6px 14px rgba(255, 94, 98, 0.3);
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  background-color: #2980b9;
+  background: #e53935;
+  transform: translateY(-1px);
 }
 
 #thong-bao {
-  margin-top: 15px;
-  font-weight: bold;
+  margin-top: 18px;
+  min-height: 26px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #2e7d32;
+}
+
+#thong-bao.error {
+  color: red;
 }
