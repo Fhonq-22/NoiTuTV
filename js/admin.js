@@ -2,12 +2,12 @@ import { db } from "./firebase-config.js";
 
 let tuGocHienTai = "";
 let daThem = 0;
-const GIOI_HAN = 222;
+const GIOI_HAN = 22;
 
 function layTuTiep() {
   if (daThem >= GIOI_HAN) {
     document.getElementById("thong-bao").textContent =
-      "Đã đạt giới hạn 222 từ đóng góp.";
+      "Đã đạt giới hạn 22 từ đóng góp.";
     return;
   }
 
@@ -107,7 +107,7 @@ function danhDauTuCut() {
   daThem++;
 
   document.getElementById("thong-bao").textContent =
-    `⚠️ Đã đánh dấu "${tuGocHienTai}" là từ cụt. (${daThem}/222)`;
+    `⚠️ Đã đánh dấu "${tuGocHienTai}" là từ cụt. (${daThem}/22)`;
 
   document.getElementById("input-value").value = "";
 
