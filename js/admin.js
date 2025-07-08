@@ -95,7 +95,7 @@ function themTu() {
           });
 
           document.getElementById("thong-bao").textContent =
-            `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/222)`;
+            `✔️ Đã thêm: ${toAdd.length} từ cho "${tuGocHienTai}". (${daThem}/22)`;
         });
     });
 }
