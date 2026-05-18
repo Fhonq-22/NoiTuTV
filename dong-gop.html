@@ -5,22 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đóng góp từ vựng</title>
   <link rel="stylesheet" href="css/dong-gop.css" />
-  <!-- Firebase compat scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
+
 <body>
   <div class="container">
     <h1>Đóng góp từ vựng</h1>
 
-    <label for="input-tu">Nhập từ muốn đóng góp (2 âm tiết):</label>
-    <input type="text" id="input-tu" placeholder="Ví dụ: Phòng chờ..." autocomplete="off" />
+    <label for="input-tu">
+      Nhập từ muốn đóng góp (2 âm tiết):
+    </label>
 
-    <button id="btn-dong-gop">Đóng góp</button>
+    <input
+      type="text"
+      id="input-tu"
+      placeholder="Ví dụ: Phòng chờ..."
+      autocomplete="off"
+    />
+
+    <button id="btn-dong-gop">
+      Đóng góp
+    </button>
 
     <p id="thong-bao"></p>
   </div>
 
-  <script type="module" src="js/dong-gop.js"></script>
+  <!-- MVC ENTRY POINT -->
+  <script type="module" src="Views/DongGopView.js"></script>
 </body>
 </html>

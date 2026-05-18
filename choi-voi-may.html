@@ -5,23 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chơi với máy - NoiTuTV</title>
   <link rel="stylesheet" href="css/choi-voi-may.css" />
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
+
 <body>
 
   <div class="container">
     <h1>🎮 Chơi với máy</h1>
-    <p>Từ hiện tại: <span id="tu-hien-tai"></span></p>
-    <p>Thời gian còn lại: <span id="thoi-gian">22</span> giây</p>
-    <p>Điểm: <span id="diem">0</span></p>
 
-    <input type="text" id="input-value" placeholder="Nhập âm tiết thứ 2" />
+    <p>
+      Từ hiện tại:
+      <span id="tu-hien-tai"></span>
+    </p>
+
+    <p>
+      Thời gian còn lại:
+      <span id="thoi-gian">22</span> giây
+    </p>
+
+    <p>
+      Điểm:
+      <span id="diem">0</span>
+    </p>
+
+    <input
+      type="text"
+      id="input-value"
+      placeholder="Nhập âm tiết thứ 2"
+    />
+
     <button id="btn-tra-loi">Trả lời</button>
 
     <p id="thong-bao"></p>
   </div>
 
-  <script type="module" src="js/choi-voi-may.js"></script>
+  <!-- MVC ENTRY POINT -->
+  <script type="module" src="Views/ChoiVoiMayView.js"></script>
+
 </body>
 </html>
