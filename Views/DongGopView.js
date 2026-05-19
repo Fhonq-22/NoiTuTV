@@ -3,7 +3,8 @@ import {
 } from "../Controllers/Tu2AmTietController.js";
 
 import {
-    themDongGop
+    themDongGop,
+    layDongGop
 } from "../Controllers/DongGopController.js";
 
 const userName = "user02";
@@ -79,6 +80,19 @@ btnDongGop.onclick = async () => {
                     true
                 );
             }
+        }
+
+        const daDongGop =
+            await layDongGop(
+                userName,
+                tuMoi
+            );
+
+        if (daDongGop !== null) {
+            return render(
+                `Bạn đã đóng góp từ "${tuMoi}" trước đó.`,
+                true
+            );
         }
 
         await themDongGop(
