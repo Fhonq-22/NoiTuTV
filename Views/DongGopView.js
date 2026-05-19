@@ -3,8 +3,7 @@ import {
 } from "../Controllers/Tu2AmTietController.js";
 
 import {
-    themDongGop,
-    layDongGop
+    themDongGop
 } from "../Controllers/DongGopController.js";
 
 const userName = "user02";
@@ -20,7 +19,10 @@ function render(msg, isError = false) {
 
 function parseInput(value) {
     const parts = value.trim().split(" ").filter(Boolean);
-    if (parts.length !== 2) return null;
+
+    if (parts.length !== 2) {
+        return null;
+    }
 
     const tuGoc =
         parts[0].charAt(0).toUpperCase() +
@@ -28,44 +30,73 @@ function parseInput(value) {
 
     const amTiet2 = parts[1].toLowerCase();
 
-    return { tuGoc, amTiet2, tuMoi: `${tuGoc} ${amTiet2}` };
+    return {
+        tuGoc,
+        amTiet2,
+        tuMoi: `${tuGoc} ${amTiet2}`
+    };
 }
+
+inputTu.addEventListener("input", () => {
+    const parsed = parseInput(inputTu.value);
+
+    if (parsed) {
+        inputTu.value = parsed.tuMoi;
+    }
+});
 
 btnDongGop.onclick = async () => {
     const parsed = parseInput(inputTu.value);
 
     if (!parsed) {
-        return render("Vui lòng nhập đúng 2 âm tiết.", true);
+        return render(
+            "Vui lòng nhập đúng 2 âm tiết.",
+            true
+        );
     }
 
-    const { tuGoc, amTiet2, tuMoi } = parsed;
+    const {
+        tuGoc,
+        amTiet2,
+        tuMoi
+    } = parsed;
 
     try {
         const tuData = await layTu2AmTiet(tuGoc);
 
-        if (tuData && tuData.DanhSachAmTietCuoi) {
+        if (
+            tuData &&
+            tuData.DanhSachAmTietCuoi &&
+            tuData.DanhSachAmTietCuoi !== "."
+        ) {
             const list = tuData.DanhSachAmTietCuoi
                 .split(",")
                 .map(v => v.trim().toLowerCase());
 
             if (list.includes(amTiet2)) {
-                return render("Từ này đã tồn tại trong từ điển.", true);
+                return render(
+                    `Từ "${tuMoi}" đã có trong từ điển.`,
+                    true
+                );
             }
         }
 
-        const dongGopCu = await layDongGop(userName);
+        await themDongGop(
+            userName,
+            tuMoi,
+            false
+        );
 
-        if (dongGopCu && dongGopCu.Word === tuMoi) {
-            return render("Bạn đã đóng góp từ này rồi.", true);
-        }
-
-        await themDongGop(userName, tuMoi, true);
-
-        render(`✅ Cảm ơn bạn đã đóng góp: ${tuMoi}`);
+        render(
+            `✅ Cảm ơn bạn đã đóng góp từ "${tuMoi}".`
+        );
 
         inputTu.value = "";
 
     } catch (err) {
-        render("Lỗi hệ thống, vui lòng thử lại.", true);
+        render(
+            "Lỗi hệ thống, vui lòng thử lại.",
+            true
+        );
     }
 };

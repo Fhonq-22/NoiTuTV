@@ -1,6 +1,7 @@
 import {
-    themAmTietCuoi,
-    layDanhSachTu2AmTiet
+    layTu2AmTiet,
+    layDanhSachTu2AmTiet,
+    themAmTietCuoi
 } from "../../Controllers/Tu2AmTietController.js";
 
 import {
@@ -13,6 +14,7 @@ import {
 
 let tuGocHienTai = "";
 let daThem = 0;
+
 const GIOI_HAN = 22;
 
 function renderThongBao(msg) {
@@ -25,15 +27,23 @@ async function layTuTiep() {
         return;
     }
 
-    const data = await layDanhSachTu2AmTiet();
+    const danhSachKey = await layDanhSachTu2AmTiet();
 
-    for (const key in data) {
-        if (!data[key]) {
+    for (const key of danhSachKey) {
+        const data = await layTu2AmTiet(key);
+
+        if (
+            !data ||
+            !data.DanhSachAmTietCuoi
+        ) {
             tuGocHienTai = key;
+
             document.getElementById("tu-goc").textContent = key;
             document.getElementById("input-value").value = "";
             document.getElementById("checkbox-kho").checked = false;
+
             renderThongBao("");
+
             return;
         }
     }
@@ -43,22 +53,49 @@ async function layTuTiep() {
 }
 
 async function themTu() {
-    const valueRaw = document.getElementById("input-value").value.trim();
-    if (!valueRaw || !tuGocHienTai) return;
+    const valueRaw =
+        document.getElementById("input-value").value.trim();
+
+    if (!valueRaw || !tuGocHienTai) {
+        return;
+    }
 
     const newValues = valueRaw
         .split(",")
         .map(v => v.trim())
-        .filter(v => v);
+        .filter(Boolean);
 
-    const isKho = document.getElementById("checkbox-kho").checked;
+    const isKho =
+        document.getElementById("checkbox-kho").checked;
 
-    const toAdd = await themAmTietCuoi(tuGocHienTai, newValues);
+    const data = await layTu2AmTiet(tuGocHienTai);
+
+    let currentList = [];
+
+    if (
+        data &&
+        data.DanhSachAmTietCuoi &&
+        data.DanhSachAmTietCuoi !== "."
+    ) {
+        currentList = data.DanhSachAmTietCuoi
+            .split(",")
+            .map(v => v.trim())
+            .filter(Boolean);
+    }
+
+    const toAdd = newValues.filter(
+        v => !currentList.includes(v)
+    );
 
     if (!toAdd.length) {
         renderThongBao("Từ này đã có đầy đủ âm tiết.");
         return;
     }
+
+    await themAmTietCuoi(
+        tuGocHienTai,
+        toAdd
+    );
 
     daThem += toAdd.length;
 
@@ -66,9 +103,23 @@ async function themTu() {
         toAdd.map(v => `${tuGocHienTai} ${v}`)
     );
 
-    if (isKho) {
-        for (const val of toAdd) {
-            await themTuKho(`${tuGocHienTai} ${val}`, true);
+    for (const val of toAdd) {
+        const valKey =
+            val.charAt(0).toUpperCase() +
+            val.slice(1);
+
+        const daTonTai =
+            await layTu2AmTiet(valKey);
+
+        if (!daTonTai) {
+            await themAmTietCuoi(valKey, []);
+        }
+
+        if (isKho) {
+            await themTuKho(
+                `${tuGocHienTai} ${val}`,
+                true
+            );
         }
     }
 
@@ -78,9 +129,15 @@ async function themTu() {
 }
 
 async function danhDauTuCut() {
-    if (!tuGocHienTai) return;
+    if (!tuGocHienTai) {
+        return;
+    }
 
-    await themAmTietCuoi(tuGocHienTai, ["."]);
+    await themAmTietCuoi(
+        tuGocHienTai,
+        ["."]
+    );
+
     daThem++;
 
     renderThongBao(
@@ -93,7 +150,14 @@ async function danhDauTuCut() {
 }
 
 document.getElementById("btn-them").onclick = themTu;
-document.getElementById("btn-khong-noi-duoc").onclick = danhDauTuCut;
-document.getElementById("btn-tiep").onclick = layTuTiep;
 
-document.addEventListener("DOMContentLoaded", layTuTiep);
+document.getElementById("btn-khong-noi-duoc").onclick =
+    danhDauTuCut;
+
+document.getElementById("btn-tiep").onclick =
+    layTuTiep;
+
+document.addEventListener(
+    "DOMContentLoaded",
+    layTuTiep
+);

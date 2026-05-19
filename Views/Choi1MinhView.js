@@ -1,4 +1,7 @@
-import { layDanhSachTu2AmTiet } from "../Controllers/Tu2AmTietController.js";
+import {
+    layDanhSachTu2AmTiet,
+    layTu2AmTiet
+} from "../Controllers/Tu2AmTietController.js";
 
 let diem = 0;
 let thoiGian = 22;
@@ -21,9 +24,8 @@ async function batDauGame() {
 }
 
 async function layTuNgauNhien() {
-    const data = await layDanhSachTu2AmTiet();
+    const keys = await layDanhSachTu2AmTiet();
 
-    const keys = Object.keys(data).filter(k => data[k] && data[k] !== ".");
     tuGoc = keys[Math.floor(Math.random() * keys.length)];
 
     tuGocSpan.textContent = tuGoc;
@@ -54,18 +56,22 @@ function ketThucGame(msg) {
 
 btnTraLoi.onclick = async () => {
     const valRaw = input.value.trim();
+
     if (!valRaw) return;
 
-    const val = valRaw.charAt(0).toUpperCase() + valRaw.slice(1).toLowerCase();
+    const val =
+        valRaw.charAt(0).toUpperCase() +
+        valRaw.slice(1).toLowerCase();
 
-    const data = await layDanhSachTu2AmTiet();
+    const data = await layTu2AmTiet(tuGoc);
 
-    const danhSach = (data[tuGoc] || "")
+    const danhSach = (data?.DanhSachAmTietCuoi || "")
         .split(",")
         .map(v => v.trim());
 
     if (danhSach.some(v => v.toLowerCase() === valRaw.toLowerCase())) {
         diem += val.length >= 5 ? 2 : 1;
+
         diemSpan.textContent = diem;
 
         thongBao.textContent = "✅ Chính xác!";
@@ -75,6 +81,7 @@ btnTraLoi.onclick = async () => {
         tuGocSpan.textContent = tuGoc;
 
         input.value = "";
+
         batDauDemNguoc();
     } else {
         thongBao.textContent = "❌ Không đúng, thử lại!";

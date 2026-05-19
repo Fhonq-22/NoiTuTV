@@ -1,5 +1,6 @@
 import {
-    layDanhSachTu2AmTiet
+    layDanhSachTu2AmTiet,
+    layTu2AmTiet
 } from "../Controllers/Tu2AmTietController.js";
 
 let tuHienTai = "";
@@ -15,24 +16,24 @@ const input = document.getElementById("input-value");
 const btnTraLoi = document.getElementById("btn-tra-loi");
 const thongBao = document.getElementById("thong-bao");
 
-function batDauGame() {
+async function batDauGame() {
     diem = 0;
     diemSpan.textContent = diem;
 
-    layTuNgauNhien();
+    await layTuNgauNhien();
 
     dangLuotNguoi = true;
+
     batDauDemNguoc();
 
     resetUI();
 }
 
 async function layTuNgauNhien() {
-    const data = await layDanhSachTu2AmTiet();
-
-    const keys = Object.keys(data).filter(k => data[k] && data[k] !== ".");
+    const keys = await layDanhSachTu2AmTiet();
 
     tuHienTai = keys[Math.floor(Math.random() * keys.length)];
+
     tuHienTaiSpan.textContent = tuHienTai;
 }
 
@@ -55,16 +56,21 @@ function batDauDemNguoc() {
 
 function ketThucGame(msg) {
     thongBao.textContent = msg;
+
     btnTraLoi.disabled = true;
     input.disabled = true;
+
     clearInterval(timer);
 }
 
 function resetUI() {
     thongBao.textContent = "";
+
     input.value = "";
+
     input.disabled = false;
     btnTraLoi.disabled = false;
+
     input.focus();
 }
 
@@ -72,17 +78,22 @@ btnTraLoi.onclick = async () => {
     if (!dangLuotNguoi) return;
 
     const valRaw = input.value.trim();
+
     if (!valRaw) return;
 
-    const val = valRaw.charAt(0).toUpperCase() + valRaw.slice(1).toLowerCase();
+    const val =
+        valRaw.charAt(0).toUpperCase() +
+        valRaw.slice(1).toLowerCase();
 
-    const danhSach = (await layDanhSachTu2AmTiet())[tuHienTai];
+    const data = await layTu2AmTiet(tuHienTai);
 
-    const list = (danhSach || "")
+    const list = (data?.DanhSachAmTietCuoi || "")
         .split(",")
         .map(v => v.trim());
 
-    const hopLe = list.some(v => v.toLowerCase() === valRaw.toLowerCase());
+    const hopLe = list.some(
+        v => v.toLowerCase() === valRaw.toLowerCase()
+    );
 
     if (hopLe) {
         diem++;
@@ -92,6 +103,7 @@ btnTraLoi.onclick = async () => {
 
         input.value = "";
         input.disabled = true;
+
         btnTraLoi.disabled = true;
 
         clearInterval(timer);
@@ -109,29 +121,39 @@ btnTraLoi.onclick = async () => {
     }
 };
 
-function luotMay() {
-    const danhSach = (await layDanhSachTu2AmTiet())[tuHienTai];
+async function luotMay() {
+    const data = await layTu2AmTiet(tuHienTai);
+
+    const danhSach = data?.DanhSachAmTietCuoi || "";
 
     if (!danhSach || danhSach === ".") {
         ketThucGame("🤖 Máy không tìm được từ nối tiếp. Bạn thắng!");
         return;
     }
 
-    const list = danhSach.split(",").map(v => v.trim()).filter(Boolean);
+    const list = danhSach
+        .split(",")
+        .map(v => v.trim())
+        .filter(Boolean);
 
-    const amTietMay = list[Math.floor(Math.random() * list.length)];
+    const amTietMay =
+        list[Math.floor(Math.random() * list.length)];
 
     diem++;
     diemSpan.textContent = diem;
 
     thongBao.textContent = `🤖 Máy chọn: ${amTietMay}`;
 
-    tuHienTai = amTietMay.charAt(0).toUpperCase() + amTietMay.slice(1);
+    tuHienTai =
+        amTietMay.charAt(0).toUpperCase() +
+        amTietMay.slice(1);
+
     tuHienTaiSpan.textContent = tuHienTai;
 
     dangLuotNguoi = true;
 
     resetUI();
+
     batDauDemNguoc();
 }
 
