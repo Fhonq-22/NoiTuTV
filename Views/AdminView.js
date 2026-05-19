@@ -1,16 +1,6 @@
-import {
-    layTu2AmTiet,
-    layDanhSachTu2AmTiet,
-    themAmTietCuoi
-} from "../../Controllers/Tu2AmTietController.js";
-
-import {
-    themTuKho
-} from "../../Controllers/TuKhoController.js";
-
-import {
-    themMotTuMoi
-} from "../../Controllers/TuMoiController.js";
+import {layTu2AmTiet, layDanhSachTu2AmTiet, themAmTietCuoi} from "../Controllers/Tu2AmTietController.js";
+import {themTuKho} from "../Controllers/TuKhoController.js";
+import {themMotTuMoi} from "../Controllers/TuMoiController.js";
 
 let tuGocHienTai = "";
 let daThem = 0;
